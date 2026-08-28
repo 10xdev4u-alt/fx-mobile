@@ -12,6 +12,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -96,15 +97,13 @@ class SessionRepositoryTest {
         )
         every { sessionDao.observeAll() } returns flowOf(entities)
 
-        repository.observeSessions().test {
-            val sessions = awaitItem()
-            assertEquals(2, sessions.size)
-            assertEquals("Session 1", sessions[0].title)
-            assertEquals(5, sessions[0].messageCount)
-            assertEquals("Session 2", sessions[1].title)
-            assertEquals(10, sessions[1].messageCount)
-            cancelAndIgnoreRemainingEvents()
-        }
+        val sessions = repository.observeSessions().first()
+
+        assertEquals(2, sessions.size)
+        assertEquals("Session 1", sessions[0].title)
+        assertEquals(5, sessions[0].messageCount)
+        assertEquals("Session 2", sessions[1].title)
+        assertEquals(10, sessions[1].messageCount)
     }
 
     @Test
@@ -116,15 +115,13 @@ class SessionRepositoryTest {
         )
         every { messageDao.observeForSession(sessionId) } returns flowOf(entities)
 
-        repository.observeMessages(sessionId).test {
-            val messages = awaitItem()
-            assertEquals(2, messages.size)
-            assertEquals("Hello", messages[0].content)
-            assertEquals(MessageRole.USER, messages[0].role)
-            assertEquals("Hi!", messages[1].content)
-            assertEquals(MessageRole.ASSISTANT, messages[1].role)
-            cancelAndIgnoreRemainingEvents()
-        }
+        val messages = repository.observeMessages(sessionId).first()
+
+        assertEquals(2, messages.size)
+        assertEquals("Hello", messages[0].content)
+        assertEquals(MessageRole.USER, messages[0].role)
+        assertEquals("Hi!", messages[1].content)
+        assertEquals(MessageRole.ASSISTANT, messages[1].role)
     }
 
     @Test
