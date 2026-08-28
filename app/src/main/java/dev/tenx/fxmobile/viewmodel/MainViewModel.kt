@@ -6,14 +6,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tenx.fxmobile.data.repository.SessionRepository
 import dev.tenx.fxmobile.domain.model.AgentMessage
 import dev.tenx.fxmobile.domain.model.AgentSession
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +22,6 @@ data class MainUiState(
     val inputDraft: String = ""
 )
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val sessionRepository: SessionRepository
@@ -38,28 +34,12 @@ class MainViewModel @Inject constructor(
         .observeSessions()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    val messages: StateFlow<List<AgentMessage>> = _uiState
-        .flatMapLatest { state ->
-            val sessionId = state.currentSessionId
-            if (sessionId != null) {
-                sessionRepository.observeMessages(sessionId)
-            } else {
-                kotlinx.coroutines.flow.flowOf(emptyList())
-            }
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-
     init {
         viewModelScope.launch {
             sessions.collect { list ->
                 if (list.isNotEmpty() && _uiState.value.currentSessionId == null) {
                     openSession(list.first().id)
                 }
-            }
-        }
-        viewModelScope.launch {
-            messages.collect { list ->
-                _uiState.value = _uiState.value.copy(messages = list)
             }
         }
     }
@@ -100,6 +80,11 @@ class MainViewModel @Inject constructor(
 
     fun openSession(id: String) {
         _uiState.value = _uiState.value.copy(currentSessionId = id)
+        viewModelScope.launch {
+            sessionRepository.observeMessages(id).collect { messages ->
+                _uiState.value = _uiState.value.copy(messages = messages)
+            }
+        }
     }
 
     fun createSession() {

@@ -12,6 +12,7 @@ import dev.tenx.fxmobile.data.remote.KiloRepositoryImpl
 import dev.tenx.fxmobile.data.remote.PreferencesManager
 import dev.tenx.fxmobile.data.remote.TokenProvider
 import dev.tenx.fxmobile.data.remote.TokenProviderImpl
+import dev.tenx.fxmobile.terminal.ShellExecutor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -74,4 +75,8 @@ object NetworkModule {
     ): KiloRepository {
         return KiloRepositoryImpl(api, tokenProvider)
     }
+
+    @Provides
+    @Singleton
+    fun provideShellExecutor(): ShellExecutor = ShellExecutor()
 }

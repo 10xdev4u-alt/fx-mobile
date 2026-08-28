@@ -18,5 +18,7 @@ interface KiloApi {
     ): Response<ChatResponseDto>
 
     @GET("models")
-    suspend fun listModels(): Response<ModelsResponseDto>
+    suspend fun listModels(
+        @Header("Authorization") authorization: String? = null
+    ): Response<ModelsResponseDto>
 }
