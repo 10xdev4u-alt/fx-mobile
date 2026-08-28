@@ -1,0 +1,53 @@
+# Android
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+build/
+.gradle/
+local.properties
+proguard/
+*.log
+.navigation/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Zig
+zig-out/
+.zig-cache/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Secrets
+*.keystore
+*.jks
+*.p12
+*.key
+*.mobileprovision
+*.provisionprofile
+secrets.properties
