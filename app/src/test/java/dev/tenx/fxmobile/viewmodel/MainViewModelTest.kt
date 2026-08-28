@@ -10,6 +10,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -64,6 +65,9 @@ class MainViewModelTest {
 
         viewModel.onInputChanged("Hello")
         viewModel.send()
+
+        // Wait for the coroutine to complete
+        advanceUntilIdle()
 
         viewModel.uiState.test {
             val state = awaitItem()
