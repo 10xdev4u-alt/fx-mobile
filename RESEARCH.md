@@ -135,11 +135,14 @@ Run fx on server, mobile app is thin ACP client.
 - Handles touch gestures, virtual keyboard, PTY integration via JNI
 - Recommended as library for fx-mobile
 
-### On-Device Inference
-- Xybrid SDK (used by Muse) — LFM2.5-1.2B-Instruct, Q4_K_M GGUF, ~700MB
-- llama.cpp Android — direct C++ integration, broader model support
-- MediaPipe LLM — Google's solution, supports Gemma, Phi
-- MLC LLM — supports multiple models, Vulkan acceleration
+### Inference Engine: Xybrid (local) + Kilo (cloud) — ACCEPTED
+- **Xybrid SDK** — local on-device LLM (LFM2.5-1.2B-Instruct, Q4_K_M GGUF, ~700MB)
+  - Privacy-first, offline-capable, proven in Muse
+  - One-time download, no network after
+- **Kilo** — cloud provider for frontier coding models
+  - Primary for complex agentic workflows
+  - Same role as Gateway/Codex/Grok in fx CLI
+- **Model router** — selects based on network, task complexity, user preference, battery/thermal
 
 ### Storage Constraints
 - Scoped Storage (Android 10+) — apps can't access arbitrary paths
