@@ -1,13 +1,8 @@
 package dev.tenx.fxmobile.data.local.storage
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import dev.tenx.fxmobile.data.local.storage.FileInfo
 import dev.tenx.fxmobile.data.local.storage.StorageManager
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
