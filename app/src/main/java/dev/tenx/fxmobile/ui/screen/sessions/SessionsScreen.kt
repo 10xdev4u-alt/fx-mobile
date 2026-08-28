@@ -24,52 +24,67 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import dev.tenx.fxmobile.ui.navigation.Screen
+import dev.tenx.fxmobile.domain.model.AgentSession
+import dev.tenx.fxmobile.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-data class Session(
-    val id: String,
-    val title: String,
-    val lastMessage: String,
-    val updatedAt: Long,
-    val messageCount: Int
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SessionsScreen(navController: NavHostController) {
-    val sampleSessions = listOf(
-        Session("1", "Fix login bug", "The authentication flow needs...", System.currentTimeMillis() - 3600000, 12),
-        Session("2", "Add unit tests", "I've added tests for the...", System.currentTimeMillis() - 7200000, 8),
-        Session("3", "Refactor database layer", "The Room entities should...", System.currentTimeMillis() - 86400000, 24)
-    )
+fun SessionsScreen(
+    navController: NavHostController,
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    val sessions by viewModel.sessions.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    var deletedSessionId by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(deletedSessionId) {
+        if (deletedSessionId != null) {
+            val result = snackbarHostState.showSnackbar(
+                message = "Session deleted",
+                actionLabel = "Undo"
+            )
+            if (result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+                // TODO: Implement undo
+            } else {
+                deletedSessionId = null
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Sessions", fontWeight = FontWeight.Bold) }
+                title = { Text("Sessions") }
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* TODO: new session */ }
-            ) {
+            FloatingActionButton(onClick = { viewModel.createSession() }) {
                 Icon(Icons.Default.Add, contentDescription = "New session")
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
-        if (sampleSessions.isEmpty()) {
+        if (sessions.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -98,11 +113,14 @@ fun SessionsScreen(navController: NavHostController) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item { Spacer(modifier = Modifier.height(8.dp)) }
-                items(sampleSessions) { session ->
+                items(sessions, key = { it.id }) { session ->
                     SessionCard(
                         session = session,
-                        onClick = { /* TODO: open session */ },
-                        onDelete = { /* TODO: delete session */ }
+                        onClick = { viewModel.openSession(session.id) },
+                        onDelete = {
+                            viewModel.deleteSession(session.id)
+                            deletedSessionId = session.id
+                        }
                     )
                 }
                 item { Spacer(modifier = Modifier.height(8.dp)) }
@@ -113,7 +131,7 @@ fun SessionsScreen(navController: NavHostController) {
 
 @Composable
 private fun SessionCard(
-    session: Session,
+    session: AgentSession,
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -137,30 +155,20 @@ private fun SessionCard(
                 Text(
                     text = session.title,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = session.lastMessage,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Row {
-                    Text(
-                        text = dateFormat.format(Date(session.updatedAt)),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "${session.messageCount} messages",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                Text(
+                    text = dateFormat.format(Date(session.updatedAt)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "${session.messageCount} messages",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             IconButton(onClick = onDelete) {
                 Icon(
