@@ -1,6 +1,5 @@
 package dev.tenx.fxmobile.data.repository
 
-import app.cash.turbine.test
 import dev.tenx.fxmobile.data.local.db.MessageDao
 import dev.tenx.fxmobile.data.local.db.SessionDao
 import dev.tenx.fxmobile.data.local.db.MessageEntity
@@ -13,7 +12,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -43,6 +41,14 @@ class SessionRepositoryTest {
     }
 
     @Test
+    fun `createSession uses default title when empty`() = runTest {
+        val id = repository.createSession()
+
+        assertTrue(id.isNotEmpty())
+        coVerify { sessionDao.insert(any()) }
+    }
+
+    @Test
     fun `sendMessage inserts user message and assistant reply`() = runTest {
         val sessionId = "session-1"
         val messageText = "Hello"
@@ -59,6 +65,8 @@ class SessionRepositoryTest {
         val result = repository.sendMessage(sessionId, messageText)
 
         assertTrue(result.isSuccess)
+        assertEquals(responseContent, result.getOrNull()?.content)
+        assertEquals(MessageRole.ASSISTANT, result.getOrNull()?.role)
         coVerify { messageDao.insert(any()) }
         coVerify { sessionDao.incrementMessageCount(sessionId, any()) }
     }
@@ -93,6 +101,28 @@ class SessionRepositoryTest {
             assertEquals(2, sessions.size)
             assertEquals("Session 1", sessions[0].title)
             assertEquals(5, sessions[0].messageCount)
+            assertEquals("Session 2", sessions[1].title)
+            assertEquals(10, sessions[1].messageCount)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `observeMessages maps entities to domain`() = runTest {
+        val sessionId = "session-1"
+        val entities = listOf(
+            MessageEntity("1", sessionId, MessageRole.USER.name, "Hello", 0),
+            MessageEntity("2", sessionId, MessageRole.ASSISTANT.name, "Hi!", 0)
+        )
+        every { messageDao.observeForSession(sessionId) } returns flowOf(entities)
+
+        repository.observeMessages(sessionId).test {
+            val messages = awaitItem()
+            assertEquals(2, messages.size)
+            assertEquals("Hello", messages[0].content)
+            assertEquals(MessageRole.USER, messages[0].role)
+            assertEquals("Hi!", messages[1].content)
+            assertEquals(MessageRole.ASSISTANT, messages[1].role)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -105,5 +135,16 @@ class SessionRepositoryTest {
 
         coVerify { messageDao.deleteForSession(sessionId) }
         coVerify { sessionDao.deleteById(sessionId) }
+    }
+
+    @Test
+    fun `renameSession updates title`() = runTest {
+        val sessionId = "session-1"
+        val existing = SessionEntity(sessionId, "Old title", 1000, 2000, 5)
+        coEvery { sessionDao.getById(sessionId) } returns existing
+
+        repository.renameSession(sessionId, "New title")
+
+        coVerify { sessionDao.insert(existing.copy(title = "New title")) }
     }
 }
