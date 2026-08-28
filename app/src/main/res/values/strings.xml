@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">fx</string>
+    <string name="sessions">Sessions</string>
+    <string name="terminal">Terminal</string>
+    <string name="settings">Settings</string>
+    <string name="new_session">New session</string>
+    <string name="delete">Delete</string>
+    <string name="send">Send</string>
+    <string name="ask_fx">Ask fx anything...</string>
+    <string name="no_sessions">No sessions yet</string>
+    <string name="quick_actions">Quick Actions</string>
+    <string name="open_project">Open project</string>
+    <string name="run_tests">Run tests</string>
+    <string name="git_status">Git status</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="use_dark_theme">Use dark theme</string>
+    <string name="notifications">Notifications</string>
+    <string name="show_agent_progress">Show agent progress</string>
+    <string name="auto_save_sessions">Auto-save sessions</string>
+    <string name="save_conversations_automatically">Save conversations automatically</string>
+    <string name="profile">Profile</string>
+    <string name="manage_your_account">Manage your account</string>
+    <string name="privacy">Privacy</string>
+    <string name="data_and_permissions">Data and permissions</string>
+    <string name="storage">Storage</string>
+    <string name="manage_local_data">Manage local data</string>
+    <string name="model_settings">Model settings</string>
+    <string name="configure_inference">Configure inference</string>
+    <string name="appearance">Appearance</string>
+    <string name="general">General</string>
+    <string name="account">Account</string>
+    <string name="data">Data</string>
+    <string name="close">Close</string>
+    <string name="messages">%d messages</string>
+</resources>
