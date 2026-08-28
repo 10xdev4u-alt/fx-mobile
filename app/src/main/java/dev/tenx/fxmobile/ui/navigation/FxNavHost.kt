@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.tenx.fxmobile.ui.screen.main.MainScreen
 import dev.tenx.fxmobile.ui.screen.sessions.SessionsScreen
+import dev.tenx.fxmobile.ui.screen.settings.ApiKeyScreen
 import dev.tenx.fxmobile.ui.screen.settings.SettingsScreen
 import dev.tenx.fxmobile.ui.screen.terminal.TerminalScreen
 
