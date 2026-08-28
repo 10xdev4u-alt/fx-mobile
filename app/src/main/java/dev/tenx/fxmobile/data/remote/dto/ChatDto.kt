@@ -35,6 +35,25 @@ data class ErrorResponseDto(
 
 data class ErrorDetailDto(
     @SerializedName("message") val message: String,
-    @SerializedName("type") val type: String,
-    @SerializedName("code") val code: String?
+    @SerializedName("type") val type: String? = null,
+    @SerializedName("code") val code: Int? = null
+)
+
+data class ModelsResponseDto(
+    @SerializedName("data") val data: List<ModelDto>
+)
+
+data class ModelDto(
+    @SerializedName("id") val id: String,
+    @SerializedName("object") val objectType: String,
+    @SerializedName("created") val created: Long,
+    @SerializedName("owned_by") val ownedBy: String,
+    @SerializedName("name") val name: String? = null,
+    @SerializedName("context_length") val contextLength: Int? = null,
+    @SerializedName("pricing") val pricing: PricingDto? = null
+)
+
+data class PricingDto(
+    @SerializedName("prompt") val prompt: String,
+    @SerializedName("completion") val completion: String
 )

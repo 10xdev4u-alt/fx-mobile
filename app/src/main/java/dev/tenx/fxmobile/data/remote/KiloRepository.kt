@@ -26,6 +26,8 @@ interface KiloRepository {
         messages: List<AgentMessage>,
         config: InferenceConfig
     ): Result<InferenceResult>
+
+    suspend fun getAvailableModels(): Result<List<String>>
 }
 
 class KiloRepositoryImpl(
@@ -52,13 +54,24 @@ class KiloRepositoryImpl(
         parseResponse(response)
     }
 
+    override suspend fun getAvailableModels(): Result<List<String>> = runCatching {
+        val response = api.listModels()
+        if (!response.isSuccessful) {
+            throw KiloError.Unknown("Failed to fetch models: ${response.code()}")
+        }
+        val body = response.body() ?: throw KiloError.Unknown("Empty response")
+        body.data.map { it.id }
+    }
+
     private fun parseResponse(response: Response<ChatResponseDto>): InferenceResult {
         if (!response.isSuccessful) {
+            val errorBody = response.errorBody()?.string()
             throw when (response.code()) {
                 401 -> KiloError.Unauthorized("Invalid API key")
+                402 -> KiloError.Unauthorized("Insufficient balance — add credits at kilocode.ai")
                 429 -> KiloError.RateLimited("Rate limit exceeded")
                 in 500..599 -> KiloError.Server("Server error", response.code())
-                else -> KiloError.Unknown("HTTP ${response.code()}")
+                else -> KiloError.Unknown("HTTP ${response.code()}: ${errorBody ?: "Unknown error"}")
             }
         }
 
