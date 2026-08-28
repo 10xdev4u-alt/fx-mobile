@@ -145,13 +145,29 @@ fun MainScreen(
                 }
             }
 
-            InputBar(
-                value = uiState.inputDraft,
-                onValueChange = viewModel::onInputChanged,
-                onSend = viewModel::send,
-                isGenerating = uiState.isGenerating,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = uiState.inputDraft,
+                    onValueChange = viewModel::onInputChanged,
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("Ask fx anything...") },
+                    singleLine = false,
+                    maxLines = 4,
+                    enabled = !uiState.isGenerating
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                IconButton(
+                    onClick = viewModel::send,
+                    enabled = uiState.inputDraft.isNotBlank() && !uiState.isGenerating
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
+                }
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -205,37 +221,6 @@ private fun MessageBubble(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun InputBar(
-    value: String,
-    onValueChange: (String) -> Unit,
-    onSend: () -> Unit,
-    isGenerating: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.weight(1f),
-            placeholder = { Text("Ask fx anything...") },
-            singleLine = false,
-            maxLines = 4,
-            enabled = !isGenerating
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(
-            onClick = onSend,
-            enabled = value.isNotBlank() && !isGenerating
-        ) {
-            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
         }
     }
 }
