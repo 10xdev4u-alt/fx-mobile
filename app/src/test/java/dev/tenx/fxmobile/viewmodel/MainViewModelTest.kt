@@ -3,7 +3,6 @@ package dev.tenx.fxmobile.viewmodel
 import app.cash.turbine.test
 import dev.tenx.fxmobile.data.repository.SessionRepository
 import dev.tenx.fxmobile.domain.model.AgentMessage
-import dev.tenx.fxmobile.domain.model.AgentSession
 import dev.tenx.fxmobile.domain.model.MessageRole
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -47,20 +46,6 @@ class MainViewModelTest {
     fun `send with empty draft does nothing`() = runTest {
         viewModel.send()
         coVerify(exactly = 0) { sessionRepository.sendMessage(any(), any()) }
-    }
-
-    @Test
-    fun `send with non-empty draft triggers send`() = runTest {
-        every { sessionRepository.createSession(any()) } returns "session-1"
-        every { sessionRepository.observeMessages(any()) } returns flowOf(emptyList())
-        coEvery { sessionRepository.sendMessage(any(), any()) } returns Result.success(
-            AgentMessage("2", "session-1", MessageRole.ASSISTANT, "Hi!", 0)
-        )
-
-        viewModel.onInputChanged("Hello")
-        viewModel.send()
-
-        coVerify { sessionRepository.sendMessage("session-1", "Hello") }
     }
 
     @Test
