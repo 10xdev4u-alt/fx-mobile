@@ -16,6 +16,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Make gradlew executable
+        run: chmod +x gradlew
       - name: Run lint
         run: ./gradlew lintDebug --no-daemon
 
@@ -28,6 +30,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Make gradlew executable
+        run: chmod +x gradlew
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest --no-daemon
 
@@ -41,6 +45,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - name: Make gradlew executable
+        run: chmod +x gradlew
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
       - name: Upload APK
