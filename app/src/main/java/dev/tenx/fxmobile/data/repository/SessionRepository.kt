@@ -11,6 +11,7 @@ import dev.tenx.fxmobile.domain.model.AgentSession
 import dev.tenx.fxmobile.domain.model.InferenceConfig
 import dev.tenx.fxmobile.domain.model.MessageRole
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.UUID
 import javax.inject.Inject
@@ -55,7 +56,7 @@ class SessionRepository @Inject constructor(
         messageDao.insert(userMessage.toEntity())
 
         // Collect current messages for context
-        val history = messageDao.observeForSession(sessionId)
+        val history = messageDao.observeForSession(sessionId).first()
         val messages = history.map { it.toDomain() }
         val config = InferenceConfig(model = preferencesManager.getModel())
 

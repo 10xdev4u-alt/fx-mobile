@@ -75,21 +75,21 @@ class MainViewModel @Inject constructor(
             var sessionId = _uiState.value.currentSessionId
             if (sessionId == null) {
                 sessionId = sessionRepository.createSession(text.take(30))
-                _uiState.update { it.copy(currentSessionId = sessionId) }
+                _uiState.value = _uiState.value.copy(currentSessionId = sessionId)
             }
 
-            _uiState.update { it.copy(isGenerating = true, inputDraft = "", error = null) }
+            _uiState.value = _uiState.value.copy(isGenerating = true, inputDraft = "", error = null)
 
             val result = sessionRepository.sendMessage(sessionId, text)
             result.fold(
-                onSuccess = { _uiState.update { it.copy(isGenerating = false) } },
+                onSuccess = {
+                    _uiState.value = _uiState.value.copy(isGenerating = false)
+                },
                 onFailure = { e ->
-                    _uiState.update {
-                        it.copy(
-                            isGenerating = false,
-                            error = e.message ?: "Unknown error"
-                        )
-                    }
+                    _uiState.value = _uiState.value.copy(
+                        isGenerating = false,
+                        error = e.message ?: "Unknown error"
+                    )
                 }
             )
         }
