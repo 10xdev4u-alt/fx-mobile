@@ -31,9 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,10 +41,6 @@ import androidx.navigation.NavHostController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navController: NavHostController) {
-    var darkMode by remember { mutableStateOf(true) }
-    var notifications by remember { mutableStateOf(true) }
-    var autoSave by remember { mutableStateOf(true) }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,30 +57,27 @@ fun SettingsScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(8.dp))
 
             SettingsSection(title = "Appearance") {
-                SettingsToggleRow(
+                SettingsClickableRow(
                     icon = Icons.Default.Palette,
                     title = "Dark mode",
                     subtitle = "Use dark theme",
-                    checked = darkMode,
-                    onCheckedChange = { darkMode = it }
+                    onClick = { /* TODO: toggle dark mode */ }
                 )
             }
 
             SettingsSection(title = "General") {
-                SettingsToggleRow(
+                SettingsClickableRow(
                     icon = Icons.Default.Info,
                     title = "Notifications",
                     subtitle = "Show agent progress",
-                    checked = notifications,
-                    onCheckedChange = { notifications = it }
+                    onClick = { /* TODO: toggle notifications */ }
                 )
                 HorizontalDivider()
-                SettingsToggleRow(
+                SettingsClickableRow(
                     icon = Icons.Default.Code,
                     title = "Auto-save sessions",
                     subtitle = "Save conversations automatically",
-                    checked = autoSave,
-                    onCheckedChange = { autoSave = it }
+                    onClick = { /* TODO: toggle auto-save */ }
                 )
             }
 
@@ -96,14 +86,14 @@ fun SettingsScreen(navController: NavHostController) {
                     icon = Icons.Default.Person,
                     title = "Profile",
                     subtitle = "Manage your account",
-                    onClick = { /* TODO */ }
+                    onClick = { /* TODO: navigate to profile */ }
                 )
                 HorizontalDivider()
                 SettingsClickableRow(
                     icon = Icons.Default.Security,
                     title = "Privacy",
                     subtitle = "Data and permissions",
-                    onClick = { /* TODO */ }
+                    onClick = { /* TODO: navigate to privacy */ }
                 )
             }
 
@@ -112,14 +102,14 @@ fun SettingsScreen(navController: NavHostController) {
                     icon = Icons.Default.Storage,
                     title = "Storage",
                     subtitle = "Manage local data",
-                    onClick = { /* TODO */ }
+                    onClick = { /* TODO: navigate to storage */ }
                 )
                 HorizontalDivider()
                 SettingsClickableRow(
                     icon = Icons.Default.Terminal,
                     title = "Model settings",
                     subtitle = "Configure inference",
-                    onClick = { /* TODO */ }
+                    onClick = { /* TODO: navigate to model settings */ }
                 )
             }
 
@@ -151,45 +141,6 @@ private fun SettingsSection(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
         content()
-    }
-}
-
-@Composable
-private fun SettingsToggleRow(
-    icon: ImageVector,
-    title: String,
-    subtitle: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCheckedChange(!checked) }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange
-        )
     }
 }
 
