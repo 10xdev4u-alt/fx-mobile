@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.tenx.fxmobile.ui.screen.main.MainScreen
+import dev.tenx.fxmobile.ui.screen.onboarding.OnboardingScreen
 import dev.tenx.fxmobile.ui.screen.sessions.SessionsScreen
 import dev.tenx.fxmobile.ui.screen.settings.ApiKeyScreen
 import dev.tenx.fxmobile.ui.screen.settings.SettingsScreen
@@ -83,6 +84,13 @@ fun FxApp() {
             }
             composable("api_key") {
                 ApiKeyScreen(onNavigateBack = { navController.popBackStack() })
+            }
+            composable("onboarding") {
+                OnboardingScreen(onComplete = {
+                    navController.navigate(Screen.Main.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                })
             }
         }
     }
