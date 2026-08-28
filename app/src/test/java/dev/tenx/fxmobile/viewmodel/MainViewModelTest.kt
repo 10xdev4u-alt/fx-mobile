@@ -12,6 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -38,7 +39,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `initial state has empty values`() {
+    fun `initial state has empty values`() = runTest {
         viewModel.uiState.test {
             val state = awaitItem()
             assertEquals("", state.inputDraft)
@@ -49,7 +50,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `onInputChanged updates draft`() {
+    fun `onInputChanged updates draft`() = runTest {
         viewModel.onInputChanged("Hello")
 
         viewModel.uiState.test {
@@ -60,13 +61,13 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `send with empty draft does nothing`() {
+    fun `send with empty draft does nothing`() = runTest {
         viewModel.send()
         coVerify(exactly = 0) { sessionRepository.sendMessage(any(), any()) }
     }
 
     @Test
-    fun `openSession loads messages`() {
+    fun `openSession loads messages`() = runTest {
         val messages = listOf(
             AgentMessage("1", "session-1", MessageRole.USER, "Hello", 0),
             AgentMessage("2", "session-1", MessageRole.ASSISTANT, "Hi!", 0)
@@ -84,7 +85,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `deleteSession removes session`() {
+    fun `deleteSession removes session`() = runTest {
         viewModel.deleteSession("session-1")
         coVerify { sessionRepository.deleteSession("session-1") }
     }
