@@ -49,7 +49,7 @@ class SessionRepositoryTest {
         val responseContent = "Hi there!"
 
         every { messageDao.observeForSession(sessionId) } returns flowOf(
-            MessageEntity("1", sessionId, MessageRole.USER.name, messageText, 0)
+            listOf(MessageEntity("1", sessionId, MessageRole.USER.name, messageText, 0))
         )
         coEvery { preferencesManager.getModel() } returns "kimi-k2"
         coEvery { kiloRepository.sendMessage(any(), any()) } returns Result.success(
@@ -68,7 +68,7 @@ class SessionRepositoryTest {
         val sessionId = "session-1"
 
         every { messageDao.observeForSession(sessionId) } returns flowOf(
-            MessageEntity("1", sessionId, MessageRole.USER.name, "Hello", 0)
+            listOf(MessageEntity("1", sessionId, MessageRole.USER.name, "Hello", 0))
         )
         coEvery { preferencesManager.getModel() } returns "kimi-k2"
         coEvery { kiloRepository.sendMessage(any(), any()) } returns Result.failure(

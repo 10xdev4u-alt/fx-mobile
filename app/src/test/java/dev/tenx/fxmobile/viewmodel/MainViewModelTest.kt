@@ -53,8 +53,10 @@ class MainViewModelTest {
     fun `send creates session and sends message`() = runTest {
         every { sessionRepository.createSession(any()) } returns "session-1"
         every { sessionRepository.observeMessages(any()) } returns flowOf(
-            AgentMessage("1", "session-1", MessageRole.USER, "Hello", 0),
-            AgentMessage("2", "session-1", MessageRole.ASSISTANT, "Hi!", 0)
+            listOf(
+                AgentMessage("1", "session-1", MessageRole.USER, "Hello", 0),
+                AgentMessage("2", "session-1", MessageRole.ASSISTANT, "Hi!", 0)
+            )
         )
         coEvery { sessionRepository.sendMessage(any(), any()) } returns Result.success(
             AgentMessage("2", "session-1", MessageRole.ASSISTANT, "Hi!", 0)
