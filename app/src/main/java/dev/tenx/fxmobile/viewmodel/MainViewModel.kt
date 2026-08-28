@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -58,13 +59,13 @@ class MainViewModel @Inject constructor(
         }
         viewModelScope.launch {
             messages.collect { list ->
-                _uiState.update { it.copy(messages = list) }
+                _uiState.value = _uiState.value.copy(messages = list)
             }
         }
     }
 
     fun onInputChanged(text: String) {
-        _uiState.update { it.copy(inputDraft = text) }
+        _uiState.value = _uiState.value.copy(inputDraft = text)
     }
 
     fun send() {
@@ -96,7 +97,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun openSession(id: String) {
-        _uiState.update { it.copy(currentSessionId = id) }
+        _uiState.value = _uiState.value.copy(currentSessionId = id)
     }
 
     fun createSession() {
@@ -110,12 +111,12 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             sessionRepository.deleteSession(id)
             if (_uiState.value.currentSessionId == id) {
-                _uiState.update { it.copy(currentSessionId = null, messages = emptyList()) }
+                _uiState.value = _uiState.value.copy(currentSessionId = null, messages = emptyList())
             }
         }
     }
 
     fun dismissError() {
-        _uiState.update { it.copy(error = null) }
+        _uiState.value = _uiState.value.copy(error = null)
     }
 }
