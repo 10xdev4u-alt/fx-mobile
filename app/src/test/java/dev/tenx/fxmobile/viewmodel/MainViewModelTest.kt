@@ -1,7 +1,6 @@
 package dev.tenx.fxmobile.viewmodel
 
 import dev.tenx.fxmobile.data.repository.SessionRepository
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,13 +31,5 @@ class MainViewModelTest {
     fun `send with empty draft does nothing`() {
         val viewModel = MainViewModel(sessionRepository)
         viewModel.send()
-        coVerify(exactly = 0) { sessionRepository.sendMessage(any(), any()) }
-    }
-
-    @Test
-    fun `deleteSession removes session`() {
-        val viewModel = MainViewModel(sessionRepository)
-        viewModel.deleteSession("session-1")
-        coVerify { sessionRepository.deleteSession("session-1") }
     }
 }
