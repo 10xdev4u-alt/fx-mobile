@@ -1,0 +1,21 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  detekt:
+    name: Detekt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      - name: Run detekt
+        run: ./gradlew detekt --no-daemon --stacktrace
+        continue-on-error: true
