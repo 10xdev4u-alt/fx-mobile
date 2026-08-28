@@ -6,12 +6,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tenx.fxmobile.data.repository.SessionRepository
 import dev.tenx.fxmobile.domain.model.AgentMessage
 import dev.tenx.fxmobile.domain.model.AgentSession
+import dev.tenx.fxmobile.domain.model.MessageRole
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 data class MainUiState(
@@ -63,12 +65,10 @@ class MainViewModel @Inject constructor(
 
             val result = sessionRepository.sendMessage(sessionId, text)
             result.fold(
-                onSuccess = { assistantMessage ->
+                onSuccess = {
                     _uiState.value = _uiState.value.copy(isGenerating = false)
-                    android.util.Log.d("MainViewModel", "Response: ${assistantMessage.content.take(100)}")
                 },
                 onFailure = { e ->
-                    android.util.Log.e("MainViewModel", "Send failed: ${e.message}", e)
                     _uiState.value = _uiState.value.copy(
                         isGenerating = false,
                         error = e.message ?: "Unknown error"
