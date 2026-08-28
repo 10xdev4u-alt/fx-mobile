@@ -7,6 +7,7 @@ pub const FxError = error{
     ConnectionFailed,
     Timeout,
     OutOfMemory,
+    NotImplemented,
 };
 
 pub const FxResult = struct {
@@ -24,6 +25,11 @@ pub fn deinit() void {
 
 pub fn version() []const u8 {
     return "0.1.0";
+}
+
+pub fn runAgent(prompt: []const u8) FxError![]const u8 {
+    _ = prompt;
+    return "Agent response placeholder";
 }
 
 comptime {
