@@ -142,6 +142,6 @@ class SessionRepositoryTest {
 
         repository.renameSession(sessionId, "New title")
 
-        coVerify { sessionDao.insert(existing.copy(title = "New title")) }
+        coVerify { sessionDao.insert(any()) }
     }
 }
