@@ -24,7 +24,7 @@ enum class MessageRole {
 
 data class InferenceConfig(
     val provider: String = "kilo",
-    val model: String = "kimi-k2",
+    val model: String = "anthropic/claude-sonnet-4.5",
     val temperature: Float = 0.7f,
     val maxTokens: Int = 4096
 )

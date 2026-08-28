@@ -83,10 +83,12 @@ class MainViewModel @Inject constructor(
 
             val result = sessionRepository.sendMessage(sessionId, text)
             result.fold(
-                onSuccess = {
+                onSuccess = { assistantMessage ->
                     _uiState.value = _uiState.value.copy(isGenerating = false)
+                    android.util.Log.d("MainViewModel", "Response: ${assistantMessage.content.take(100)}")
                 },
                 onFailure = { e ->
+                    android.util.Log.e("MainViewModel", "Send failed: ${e.message}", e)
                     _uiState.value = _uiState.value.copy(
                         isGenerating = false,
                         error = e.message ?: "Unknown error"
