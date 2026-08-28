@@ -1,8 +1,8 @@
 package dev.tenx.fxmobile.subagent
 
 import dev.tenx.fxmobile.data.remote.KiloRepository
-import dev.tenx.fxmobile.data.remote.InferenceConfig
 import dev.tenx.fxmobile.domain.model.AgentMessage
+import dev.tenx.fxmobile.domain.model.InferenceConfig
 import dev.tenx.fxmobile.domain.model.MessageRole
 import dev.tenx.fxmobile.tools.ToolRegistry
 import kotlinx.coroutines.CoroutineScope
