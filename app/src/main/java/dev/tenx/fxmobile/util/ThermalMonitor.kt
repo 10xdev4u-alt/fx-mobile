@@ -1,7 +1,9 @@
 package dev.tenx.fxmobile.util
 
 import android.content.Context
+import android.os.Build
 import android.os.PowerManager
+import androidx.annotation.RequiresApi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +19,14 @@ class ThermalMonitor @Inject constructor(
         get() = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
     fun getThermalStatus(): ThermalStatus {
-        val status = powerManager.currentThermalStatus
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            return ThermalStatus.NONE
+        }
+        return mapThermalStatus(powerManager.currentThermalStatus)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun mapThermalStatus(status: Int): ThermalStatus {
         return when (status) {
             PowerManager.THERMAL_STATUS_NONE -> ThermalStatus.NONE
             PowerManager.THERMAL_STATUS_LIGHT -> ThermalStatus.LIGHT
@@ -41,7 +50,7 @@ class ThermalMonitor @Inject constructor(
     fun thermalStatusFlow(): Flow<ThermalStatus> = flow {
         while (true) {
             emit(getThermalStatus())
-            delay(5000) // Check every 5 seconds
+            delay(5000)
         }
     }
 }
