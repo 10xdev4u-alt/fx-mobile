@@ -19,7 +19,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
       - name: Run lint
-        run: ./gradlew lintDebug --no-daemon
+        run: ./gradlew lintDebug --no-daemon --stacktrace
 
   test:
     name: Unit Tests
@@ -33,7 +33,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest --no-daemon
+        run: ./gradlew testDebugUnitTest --no-daemon --stacktrace
 
   build:
     name: Build
@@ -48,7 +48,7 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
