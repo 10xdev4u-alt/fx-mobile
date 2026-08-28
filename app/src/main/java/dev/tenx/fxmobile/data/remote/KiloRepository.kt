@@ -55,7 +55,8 @@ class KiloRepositoryImpl(
     }
 
     override suspend fun getAvailableModels(): Result<List<String>> = runCatching {
-        val response = api.listModels()
+        val token = tokenProvider.getToken()
+        val response = api.listModels(token?.let { "Bearer $it" })
         if (!response.isSuccessful) {
             throw KiloError.Unknown("Failed to fetch models: ${response.code()}")
         }
