@@ -135,14 +135,13 @@ Run fx on server, mobile app is thin ACP client.
 - Handles touch gestures, virtual keyboard, PTY integration via JNI
 - Recommended as library for fx-mobile
 
-### Inference Engine: Xybrid (local) + Kilo (cloud) — ACCEPTED
-- **Xybrid SDK** — local on-device LLM (LFM2.5-1.2B-Instruct, Q4_K_M GGUF, ~700MB)
-  - Privacy-first, offline-capable, proven in Muse
-  - One-time download, no network after
+### Inference Engine: Kilo (cloud) — ACCEPTED
 - **Kilo** — cloud provider for frontier coding models
   - Primary for complex agentic workflows
   - Same role as Gateway/Codex/Grok in fx CLI
-- **Model router** — selects based on network, task complexity, user preference, battery/thermal
+- **No on-device LLM for v1.0** — cloud-only inference
+  - Simpler architecture, no model download/thermal concerns
+  - Offline mode = session persistence + queued prompts (no inference until online)
 
 ### Storage Constraints
 - Scoped Storage (Android 10+) — apps can't access arbitrary paths

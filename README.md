@@ -20,7 +20,7 @@ Bring the full fx coding agent experience to mobile — terminal, tools, agent r
 - **Zig core** — cross-compiled to Android aarch64 (`libfx.so`)
 - **Kotlin/Compose UI** — native Android interface
 - **Terminal emulation** — based on TerminalView (Termux)
-- **Inference** — cloud (Gateway/Codex/Grok) + on-device (Xybrid/llama.cpp)
+- **Inference** — cloud (Kilo)
 - **Session persistence** — Room database
 
 ## Research
