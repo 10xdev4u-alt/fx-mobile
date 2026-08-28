@@ -80,6 +80,9 @@ fun FxApp() {
             composable(Screen.Settings.route) {
                 SettingsScreen(navController = navController)
             }
+            composable("api_key") {
+                ApiKeyScreen(onNavigateBack = { navController.popBackStack() })
+            }
         }
     }
 }

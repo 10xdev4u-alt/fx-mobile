@@ -107,9 +107,9 @@ fun SettingsScreen(navController: NavHostController) {
                 HorizontalDivider()
                 SettingsClickableRow(
                     icon = Icons.Default.Terminal,
-                    title = "Model settings",
-                    subtitle = "Configure inference",
-                    onClick = { /* TODO: navigate to model settings */ }
+                    title = "API Key",
+                    subtitle = "Configure Kilo API key",
+                    onClick = { navController.navigate("api_key") }
                 )
             }
 
