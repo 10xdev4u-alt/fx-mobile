@@ -44,8 +44,8 @@ class AgentService : Service() {
         }
     }
 
-    @Inject
-    lateinit var notificationManager: NotificationManager
+    private val notificationManager: NotificationManager
+        get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     override fun onCreate() {
         super.onCreate()
