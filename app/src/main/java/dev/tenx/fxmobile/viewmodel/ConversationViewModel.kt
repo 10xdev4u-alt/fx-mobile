@@ -3,8 +3,8 @@ package dev.tenx.fxmobile.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.tenx.fxmobile.data.repository.SessionRepository
-import dev.tenx.fxmobile.data.remote.TokenProvider
+import dev.tenx.fxmobile.data.remote.KiloRepository
+import dev.tenx.fxmobile.data.remote.InferenceConfig
 import dev.tenx.fxmobile.domain.model.AgentMessage
 import dev.tenx.fxmobile.domain.model.MessageRole
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,8 +29,8 @@ data class ConversationUiState(
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
-    private val sessionRepository: SessionRepository,
-    private val tokenProvider: TokenProvider
+    private val kiloRepository: KiloRepository,
+    private val sessionRepository: dev.tenx.fxmobile.data.repository.SessionRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ConversationUiState())
@@ -48,18 +48,18 @@ class ConversationViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun loadSession(sessionId: String) {
-        _uiState.update { it.copy(currentSessionId = sessionId) }
+        _uiState.value = _uiState.value.copy(currentSessionId = sessionId)
     }
 
     fun createNewSession() {
         viewModelScope.launch {
             val id = sessionRepository.createSession()
-            _uiState.update { it.copy(currentSessionId = id, title = "New session") }
+            _uiState.value = _uiState.value.copy(currentSessionId = id, title = "New session")
         }
     }
 
     fun onInputChanged(text: String) {
-        _uiState.update { it.copy(inputDraft = text) }
+        _uiState.value = _uiState.value.copy(inputDraft = text)
     }
 
     fun send() {
@@ -70,23 +70,21 @@ class ConversationViewModel @Inject constructor(
             var sessionId = _uiState.value.currentSessionId
             if (sessionId == null) {
                 sessionId = sessionRepository.createSession(text.take(30))
-                _uiState.update { it.copy(currentSessionId = sessionId, title = text.take(30)) }
+                _uiState.value = _uiState.value.copy(currentSessionId = sessionId, title = text.take(30))
             }
 
-            _uiState.update { it.copy(isGenerating = true, inputDraft = "", error = null) }
+            _uiState.value = _uiState.value.copy(isGenerating = true, inputDraft = "", error = null)
 
             val result = sessionRepository.sendMessage(sessionId, text)
             result.fold(
                 onSuccess = {
-                    _uiState.update { it.copy(isGenerating = false) }
+                    _uiState.value = _uiState.value.copy(isGenerating = false)
                 },
                 onFailure = { e ->
-                    _uiState.update {
-                        it.copy(
-                            isGenerating = false,
-                            error = e.message ?: "Unknown error"
-                        )
-                    }
+                    _uiState.value = _uiState.value.copy(
+                        isGenerating = false,
+                        error = e.message ?: "Unknown error"
+                    )
                 }
             )
         }
@@ -96,12 +94,12 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             sessionRepository.deleteSession(id)
             if (_uiState.value.currentSessionId == id) {
-                _uiState.update { it.copy(currentSessionId = null) }
+                _uiState.value = _uiState.value.copy(currentSessionId = null)
             }
         }
     }
 
     fun dismissError() {
-        _uiState.update { it.copy(error = null) }
+        _uiState.value = _uiState.value.copy(error = null)
     }
 }
