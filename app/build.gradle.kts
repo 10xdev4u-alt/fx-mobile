@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "dev.tenx.fxmobile"
-    compileSdk = 37
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "dev.tenx.fxmobile"
@@ -65,7 +65,7 @@ android {
 
 dependencies {
     // Core
-    implementation("androidx.core:core-ktx:1.19.0")
+    implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.activity:activity-compose:1.9.2")
 
