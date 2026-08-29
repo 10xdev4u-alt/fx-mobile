@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import dev.tenx.fxmobile.domain.model.AgentMessage
+import dev.tenx.fxmobile.domain.model.MessageRole
 import dev.tenx.fxmobile.ui.navigation.Screen
 import dev.tenx.fxmobile.viewmodel.MainViewModel
 
@@ -54,15 +56,8 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val sessions by viewModel.sessions.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val listState = rememberLazyListState()
-
-    LaunchedEffect(uiState.messages.size) {
-        if (uiState.messages.isNotEmpty()) {
-            listState.animateScrollToItem(uiState.messages.lastIndex)
-        }
-    }
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
@@ -99,7 +94,9 @@ fun MainScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            if (uiState.messages.isEmpty() && !uiState.isGenerating) {
+            val messages = viewModel.messages.collectAsStateWithLifecycle()
+
+            if (messages.value.isEmpty() && !uiState.isGenerating) {
                 EmptyState(
                     modifier = Modifier
                         .weight(1f)
@@ -116,10 +113,10 @@ fun MainScreen(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     item { Spacer(modifier = Modifier.height(8.dp)) }
-                    items(uiState.messages, key = { it.id }) { message ->
+                    items(messages.value, key = { it.id }) { message ->
                         MessageBubble(
                             text = message.content,
-                            isUser = message.role == dev.tenx.fxmobile.domain.model.MessageRole.USER
+                            isUser = message.role == MessageRole.USER
                         )
                     }
                     if (uiState.isGenerating) {
@@ -145,13 +142,29 @@ fun MainScreen(
                 }
             }
 
-            InputBar(
-                value = uiState.inputDraft,
-                onValueChange = viewModel::onInputChanged,
-                onSend = viewModel::send,
-                isGenerating = uiState.isGenerating,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = uiState.inputDraft,
+                    onValueChange = viewModel::onInputChanged,
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("Ask fx anything...") },
+                    singleLine = false,
+                    maxLines = 4,
+                    enabled = !uiState.isGenerating
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                IconButton(
+                    onClick = viewModel::send,
+                    enabled = uiState.inputDraft.isNotBlank() && !uiState.isGenerating
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
+                }
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -205,37 +218,6 @@ private fun MessageBubble(
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun InputBar(
-    value: String,
-    onValueChange: (String) -> Unit,
-    onSend: () -> Unit,
-    isGenerating: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.weight(1f),
-            placeholder = { Text("Ask fx anything...") },
-            singleLine = false,
-            maxLines = 4,
-            enabled = !isGenerating
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(
-            onClick = onSend,
-            enabled = value.isNotBlank() && !isGenerating
-        ) {
-            Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
         }
     }
 }
