@@ -8,14 +8,13 @@ bin/
 gen/
 out/
 build/
-.gradle/
+.externalNativeBuild/
+.cxx/
 local.properties
 proguard/
 *.log
 .navigation/
 captures/
-.externalNativeBuild/
-.cxx/
 
 # Zig
 zig-out/
@@ -39,11 +38,11 @@ zig-out/
 
 # OS
 .DS_Store
-Thumbs.db
+Thumbsumbs.db
 ehthumbs.db
 Desktop.ini
 
-# Secrets
+# Secrets - NEVER commit these
 *.keystore
 *.jks
 *.p12
@@ -51,3 +50,16 @@ Desktop.ini
 *.mobileprovision
 *.provisionprofile
 secrets.properties
+keystore.properties
+.jks
+credentials.json
+*/credentials/*
+google-services.json
+*/google-services.json
+
+# Gradle
+.gradle/
+gradle-app.setting
+
+# Termux
+.termux/
