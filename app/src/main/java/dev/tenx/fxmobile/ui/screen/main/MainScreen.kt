@@ -94,7 +94,9 @@ fun MainScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: menu */ }) }
+                    IconButton(onClick = { /* TODO: menu */ }) {
+                        Icon(Icons.Default.Send, contentDescription = "Menu")
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
