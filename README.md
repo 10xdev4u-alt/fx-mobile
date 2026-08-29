@@ -2,9 +2,10 @@
 
 > The AI coding agent, now in your pocket 🚀
 
-[![Build Status](https://github.com/10xdev4u-alt/fx-mobile/workflows/CI/badge.svg)](https://github.com/10xdev4u-alt/fx-mobile/actions)
+[![Build Status](https://github.com/10xdev4u-alt/fx-mobile/workflows/CI%20&%20Build/badge.svg)](https://github.com/10xdev4u-alt/fx-mobile/actions)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/10xdev4u-alt/fx-mobile)](https://github.com/10xdev4u-alt/fx-mobile/releases)
+[![Landing Page](https://img.shields.io/badge/landing-page-6366f1)](https://10xdev4u-alt.github.io/fx-mobile/)
 
 ## Status
 
