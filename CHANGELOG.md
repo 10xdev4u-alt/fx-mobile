@@ -24,6 +24,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1] — 2026-08-30
+
+### Fixed
+
+- Fixed crash on startup caused by Retrofit base URL missing trailing slash
+- Fixed duplicate ShellExecutor binding in NetworkModule
+- Fixed compilation errors in ConversationScreen and ConversationViewModel
+- Removed unused InferenceConfig import
+- Updated dependencies to compatible versions (okhttp 4.12.0, coroutines 1.8.1)
+- Removed signing config from CI builds to prevent keystore errors
+
+### Infrastructure
+
+- Consolidated CI/CD workflows into build-publish.yml
+- Added GitHub Pages deployment for landing page
+- Release workflow now builds both debug and release APKs
+
+---
+
 ## [0.1.0] — 2026-08-29
 
 ### Added
