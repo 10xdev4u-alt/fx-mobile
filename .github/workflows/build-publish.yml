@@ -1,0 +1,193 @@
+name: Build & Publish
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
+      - name: Run lint
+        run: ./gradlew lintDebug --no-daemon
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --no-daemon
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: app/build/reports/tests/
+
+  build-debug:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+      
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 30
+
+  build-release:
+    name: Build Release APK
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --no-daemon
+      
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 30
+
+  publish-release:
+    name: Publish Release
+    runs-on: ubuntu-latest
+    needs: [build-debug, build-release]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: debug-apk
+          path: apks
+      
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+          path: apks
+      
+      - name: Rename APKs
+        run: |
+          mv apks/app-debug.apk apks/fx-mobile-${{ github.ref_name }}-debug.apk
+          mv apks/app-release.apk apks/fx-mobile-${{ github.ref_name }}-release.apk
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: apks/*.apk
+          body: |
+            ## fx-Mobile ${{ github.ref_name }}
+            
+            ### Downloads
+            - **fx-mobile-${{ github.ref_name }}-debug.apk** - Debug build (for testing)
+            - **fx-mobile-${{ github.ref_name }}-release.apk** - Release build (for production)
+            
+            ### Installation
+            1. Download the APK
+            2. Enable "Install from unknown sources" in Android settings
+            3. Install the APK
+            4. Open fx and enter your Kilo API key
+            
+            ### Requirements
+            - Android 8.0+ (API 26)
+            - 4GB RAM recommended
+            - Internet connection for AI features
+            
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for full changelog.
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
+  publish-pages:
+    name: Publish GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Copy landing page to docs
+        run: |
+          mkdir -p public
+          cp landing/index.html public/index.html
+      
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
