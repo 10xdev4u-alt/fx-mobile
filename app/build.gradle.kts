@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "dev.tenx.fxmobile"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "dev.tenx.fxmobile"
