@@ -1,46 +1,81 @@
 # fx-Mobile
 
-> fx on mobile — native Android port of the fx coding agent
+> The AI coding agent, now in your pocket 🚀
 
 [![Build Status](https://github.com/10xdev4u-alt/fx-mobile/workflows/CI/badge.svg)](https://github.com/10xdev4u-alt/fx-mobile/actions)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/10xdev4u-alt/fx-mobile)](https://github.com/10xdev4u-alt/fx-mobile/releases)
 
 ## Status
 
-**Research phase complete.** 40 research issues raised. 0 commits. 0 PRs.
+**v1.0 released!** 35 PRs merged. 40 issues closed. 4,500+ lines of code.
 
-This project is in the early research phase. We are following an agentic git issues-PR driven development workflow where every change starts as an issue, gets validated, and is implemented through reviewed pull requests.
+fx-mobile is a native Android port of the [fx](https://github.com/vercel-labs/fx) coding agent. It brings the full fx experience to mobile: terminal, AI chat, file management, and more.
 
-## Vision
+## Features
 
-Bring the full fx coding agent experience to mobile — terminal, tools, agent runtime, and all — natively on Android.
+- **AI Chat** — Conversations with 500+ AI models via Kilo API
+- **Terminal** — Real shell command execution with working directory support
+- **File Explorer** — Navigate, read, write, and create files
+- **Sessions** — Persistent conversation history
+- **Settings** — Dark mode, notifications, auto-save, model selection
+- **Quick Settings Tile** — Open fx from notification shade (Android 14+)
+- **Home Screen Widget** — Quick prompt and terminal access
+- **Markdown Rendering** — Code blocks, headers, lists in chat
+- **Subagents** — Parallel task execution
+- **Tools** — Built-in shell, file read/write/list tools
 
 ## Architecture
 
-- **Zig core** — cross-compiled to Android aarch64 (`libfx.so`)
-- **Kotlin/Compose UI** — native Android interface
-- **Terminal emulation** — based on TerminalView (Termux)
-- **Inference** — cloud (Kilo)
-- **Session persistence** — Room database
+```
+┌─────────────────────────────────────────────┐
+│              fx-mobile app                   │
+├─────────────────────────────────────────────┤
+│  UI Layer (Compose)                         │
+├─────────────────────────────────────────────┤
+│  ViewModel Layer (StateFlow)                │
+├─────────────────────────────────────────────┤
+│  Data Layer (Room, DataStore, Retrofit)     │
+├─────────────────────────────────────────────┤
+│  Domain Layer (Models, Tools, Terminal)     │
+└─────────────────────────────────────────────┘
+```
 
-## Research
+## Getting Started
 
-See [RESEARCH.md](RESEARCH.md) for the complete research summary.
+### Prerequisites
+- Android 8.0+ (API 26)
+- 4GB RAM recommended
+- Kilo API key (free at [kilocode.ai](https://kilocode.ai))
 
-All research issues are tracked in the [GitHub Issues](https://github.com/10xdev4u-alt/fx-mobile/issues).
+### Installation
+1. Download the latest APK from [Releases](https://github.com/10xdev4u-alt/fx-mobile/releases)
+2. Enable "Install from unknown sources" in Android settings
+3. Install the APK
+4. Open fx and enter your Kilo API key
 
-## Development Workflow
+### Development
+```bash
+git clone https://github.com/10xdev4u-alt/fx-mobile.git
+cd fx-mobile
+./gradlew assembleDebug
+```
 
-1. Research → raise issue
-2. Evaluate → discuss and refine
-3. Validate → confirm approach with evidence
-4. Start → implement solution
-5. Commit → strict 6-word conventional commits
-6. Local validation → build, test, verify
-7. Push & PR → raise PR with co-authoring
-8. Review → team review
-9. Merge → validate and merge
-10. Clean → remove branches, repeat
+## Documentation
+
+- [Changelog](CHANGELOG.md) — Version history
+- [Roadmap](ROADMAP.md) — Future plans
+- [Project Summary](PROJECT_SUMMARY.md) — Architecture overview
+- [ADR](docs/adr/) — Architecture Decision Records
+- [Research](docs/research/) — Deep research documents
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Follow conventional commits
+4. Write tests for new features
+5. Open a pull request
 
 ## Team
 
@@ -49,4 +84,4 @@ All research issues are tracked in the [GitHub Issues](https://github.com/10xdev
 
 ## License
 
-[Apache-2.0](LICENSE)
+[Apache-2.0](LICENSE) — same as fx
