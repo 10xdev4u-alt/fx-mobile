@@ -29,6 +29,7 @@ val FxSurface = Color(0xFFFFF8F6)
 val FxSurfaceContainerLow = Color(0xFFFFF0EC)
 val FxSurfaceContainer = Color(0xFFFCEAE4)
 val FxSurfaceContainerHigh = Color(0xFFF6E4DE)
+val FxSurfaceContainerHighest = Color(0xFFF0DED8)
 val FxOnSurface = Color(0xFF231916)
 val FxOnSurfaceVariant = Color(0xFF53433F)
 val FxOutline = Color(0xFF85736E)
@@ -61,7 +62,7 @@ private val LightColorScheme = lightColorScheme(
     surfaceContainerHigh = FxSurfaceContainerHigh,
     surfaceContainerLow = FxSurfaceContainerLow,
     surfaceContainerLowest = Color.White,
-    surfaceContainerHighest = Color(0xFFF0DED8)
+    surfaceContainerHighest = FxSurfaceContainerHighest
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -101,25 +102,25 @@ val FxTypography = Typography(
         fontWeight = FontWeight.W500,
         fontSize = 34.sp,
         lineHeight = 40.sp,
-        letterSpacing = (-0.02).em
+        letterSpacing = (-0.68).sp
     ),
     headlineMedium = TextStyle(
         fontWeight = FontWeight.W500,
         fontSize = 24.sp,
         lineHeight = 32.sp,
-        letterSpacing = (-0.01).em
+        letterSpacing = (-0.24).sp
     ),
     titleLarge = TextStyle(
         fontWeight = FontWeight.W600,
         fontSize = 20.sp,
         lineHeight = 28.sp,
-        letterSpacing = (-0.01).em
+        letterSpacing = (-0.20).sp
     ),
     titleMedium = TextStyle(
         fontWeight = FontWeight.W600,
         fontSize = 17.sp,
         lineHeight = 24.sp,
-        letterSpacing = (-0.01).em
+        letterSpacing = (-0.17).sp
     ),
     bodyLarge = TextStyle(
         fontWeight = FontWeight.W400,
@@ -137,19 +138,19 @@ val FxTypography = Typography(
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         lineHeight = 20.sp,
-        letterSpacing = 0.01.sp
+        letterSpacing = 0.14.sp
     ),
     labelMedium = TextStyle(
         fontWeight = FontWeight.W500,
         fontSize = 13.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.01.sp
+        letterSpacing = 0.13.sp
     ),
     labelSmall = TextStyle(
         fontWeight = FontWeight.W500,
         fontSize = 11.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.05.sp
+        letterSpacing = 0.55.sp
     )
 )
 
