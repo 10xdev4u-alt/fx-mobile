@@ -6,9 +6,11 @@ on:
       - 'v*'
 
 jobs:
-  build:
-    name: Build Release APK
+  build-and-release:
+    name: Build & Release APK
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       
@@ -23,45 +25,38 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
       
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --no-daemon
+      
       - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: ./gradlew assembleRelease --no-daemon
       
-      - name: Sign APK
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: "35.0.0"
-      
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: fx-mobile-${{ github.ref_name }}
-          path: app/build/outputs/apk/release/*.apk
-
-  release:
-    name: Create Release
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download APK
-        uses: actions/download-artifact@v4
-        with:
-          name: fx-mobile-${{ github.ref_name }}
-          path: release-assets
+      - name: Rename APKs
+        run: |
+          mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/fx-mobile-${{ github.ref_name }}-debug.apk
+          mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/fx-mobile-${{ github.ref_name }}-release.apk
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: release-assets/*.apk
+          files: app/build/outputs/apk/*.apk
+          body: |
+            ## fx-Mobile ${{ github.ref_name }}
+            
+            ### Downloads
+            - **fx-mobile-${{ github.ref_name }}-debug.apk** - Debug build
+            - **fx-mobile-${{ github.ref_name }}-release.apk** - Release build (unsigned)
+            
+            ### Installation
+            1. Download the APK
+            2. Enable "Install from unknown sources" in Android settings
+            3. Install the APK
+            4. Open fx and enter your Kilo API key
+            
+            ### Requirements
+            - Android 8.0+ (API 26)
+            - 4GB RAM recommended
+            - Internet connection for AI features
           generate_release_notes: true
           draft: false
           prerelease: false
