@@ -19,6 +19,9 @@ data class SettingsUiState(
     val availableModels: List<String> = emptyList(),
     val isSaving: Boolean = false,
     val isLoadingModels: Boolean = false,
+    val darkMode: Boolean = true,
+    val notificationsEnabled: Boolean = true,
+    val autoSaveSessions: Boolean = true,
     val error: String? = null
 )
 
@@ -36,7 +39,18 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val existingKey = tokenProvider.getToken() ?: ""
             val savedModel = preferencesManager.getModel()
-            _uiState.update { it.copy(apiKey = existingKey, selectedModel = savedModel) }
+            val darkMode = preferencesManager.getDarkMode()
+            val notifications = preferencesManager.getNotificationsEnabled()
+            val autoSave = preferencesManager.getAutoSaveSessions()
+            _uiState.update {
+                it.copy(
+                    apiKey = existingKey,
+                    selectedModel = savedModel,
+                    darkMode = darkMode,
+                    notificationsEnabled = notifications,
+                    autoSaveSessions = autoSave
+                )
+            }
         }
     }
 
@@ -48,6 +62,27 @@ class SettingsViewModel @Inject constructor(
         _uiState.update { it.copy(selectedModel = model) }
         viewModelScope.launch {
             preferencesManager.setModel(model)
+        }
+    }
+
+    fun onDarkModeChanged(enabled: Boolean) {
+        _uiState.update { it.copy(darkMode = enabled) }
+        viewModelScope.launch {
+            preferencesManager.setDarkMode(enabled)
+        }
+    }
+
+    fun onNotificationsChanged(enabled: Boolean) {
+        _uiState.update { it.copy(notificationsEnabled = enabled) }
+        viewModelScope.launch {
+            preferencesManager.setNotificationsEnabled(enabled)
+        }
+    }
+
+    fun onAutoSaveChanged(enabled: Boolean) {
+        _uiState.update { it.copy(autoSaveSessions = enabled) }
+        viewModelScope.launch {
+            preferencesManager.setAutoSaveSessions(enabled)
         }
     }
 

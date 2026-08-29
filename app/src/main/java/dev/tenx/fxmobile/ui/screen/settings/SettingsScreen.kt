@@ -31,16 +31,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import dev.tenx.fxmobile.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navController: NavHostController) {
+fun SettingsScreen(
+    navController: NavHostController,
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -57,27 +66,30 @@ fun SettingsScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(8.dp))
 
             SettingsSection(title = "Appearance") {
-                SettingsClickableRow(
+                SettingsToggleRow(
                     icon = Icons.Default.Palette,
                     title = "Dark mode",
                     subtitle = "Use dark theme",
-                    onClick = { /* TODO: toggle dark mode */ }
+                    checked = uiState.darkMode,
+                    onCheckedChange = viewModel::onDarkModeChanged
                 )
             }
 
             SettingsSection(title = "General") {
-                SettingsClickableRow(
+                SettingsToggleRow(
                     icon = Icons.Default.Info,
                     title = "Notifications",
                     subtitle = "Show agent progress",
-                    onClick = { /* TODO: toggle notifications */ }
+                    checked = uiState.notificationsEnabled,
+                    onCheckedChange = viewModel::onNotificationsChanged
                 )
                 HorizontalDivider()
-                SettingsClickableRow(
+                SettingsToggleRow(
                     icon = Icons.Default.Code,
                     title = "Auto-save sessions",
                     subtitle = "Save conversations automatically",
-                    onClick = { /* TODO: toggle auto-save */ }
+                    checked = uiState.autoSaveSessions,
+                    onCheckedChange = viewModel::onAutoSaveChanged
                 )
             }
 
@@ -141,6 +153,45 @@ private fun SettingsSection(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
         content()
+    }
+}
+
+@Composable
+private fun SettingsToggleRow(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onCheckedChange(!checked) }
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
 
