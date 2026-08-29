@@ -116,7 +116,7 @@ fun SessionsScreen(
                 items(sessions, key = { it.id }) { session ->
                     SessionCard(
                         session = session,
-                        onClick = { viewModel.openSession(session.id) },
+                        onClick = { viewModel.selectSession(session.id) },
                         onDelete = {
                             viewModel.deleteSession(session.id)
                             deletedSessionId = session.id
