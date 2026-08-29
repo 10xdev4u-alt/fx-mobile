@@ -8,26 +8,34 @@ import android.service.quicksettings.TileService
 import androidx.annotation.RequiresApi
 import dev.tenx.fxmobile.MainActivity
 
-@RequiresApi(Build.VERSION_CODES.N)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 class FxQuickSettingsTile : TileService() {
 
     override fun onStartListening() {
         super.onStartListening()
-        updateTile()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            updateTile()
+        }
     }
 
     override fun onClick() {
         super.onClick()
-        val intent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            try {
+                startActivityAndCollapse(pendingIntent)
+            } catch (e: Exception) {
+                startActivity(intent)
+            }
         }
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-        startActivityAndCollapse(pendingIntent)
     }
 
     private fun updateTile() {
