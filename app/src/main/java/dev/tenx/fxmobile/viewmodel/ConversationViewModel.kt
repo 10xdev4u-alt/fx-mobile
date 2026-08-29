@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tenx.fxmobile.data.remote.KiloRepository
-import dev.tenx.fxmobile.data.remote.InferenceConfig
 import dev.tenx.fxmobile.domain.model.AgentMessage
 import dev.tenx.fxmobile.domain.model.MessageRole
 import kotlinx.coroutines.ExperimentalCoroutinesApi
