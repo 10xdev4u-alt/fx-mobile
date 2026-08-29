@@ -2,13 +2,15 @@ package dev.tenx.fxmobile.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +32,7 @@ import dev.tenx.fxmobile.ui.screen.terminal.TerminalScreen
 
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
     data object Main : Screen("main", "Home", Icons.Default.Home)
-    data object Sessions : Screen("sessions", "Sessions", Icons.Default.History)
+    data object Sessions : Screen("sessions", "Sessions", Icons.AutoMirrored.Filled.List)
     data object Terminal : Screen("terminal", "Terminal", Icons.Default.Terminal)
     data object Settings : Screen("settings", "Settings", Icons.Default.Settings)
 }
@@ -45,12 +47,22 @@ fun FxApp() {
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ) {
                 bottomNavItems.forEach { screen ->
+                    val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
                     NavigationBarItem(
                         icon = { Icon(screen.icon, contentDescription = screen.label) },
-                        label = { Text(screen.label) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                        label = { Text(screen.label, style = MaterialTheme.typography.labelSmall) },
+                        selected = selected,
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            selectedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            indicatorColor = MaterialTheme.colorScheme.secondaryContainer
+                        ),
                         onClick = {
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -63,7 +75,8 @@ fun FxApp() {
                     )
                 }
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.surface
     ) { innerPadding ->
         NavHost(
             navController = navController,
