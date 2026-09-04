@@ -86,9 +86,9 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.8.4")
+    implementation("androidx.room:room-ktx:2.8.4")
+    kapt("androidx.room:room-compiler:2.8.4")
 
     // DocumentFile for SAF
     implementation("androidx.documentfile:documentfile:1.0.1")
@@ -117,7 +117,7 @@ dependencies {
     // Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
-    testImplementation("androidx.room:room-testing:2.6.1")
+    testImplementation("androidx.room:room-testing:2.8.4")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("app.cash.turbine:turbine:1.2.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
